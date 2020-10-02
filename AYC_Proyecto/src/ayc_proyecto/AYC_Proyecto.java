@@ -22,6 +22,7 @@ public class AYC_Proyecto {
         //agregandoPalabrasReservadas(palabrasReservadas);
         String[] secun;
         //Conexion cn = new Conexion();
+        Secuencias s = new Secuencias();
         Scanner leer = new Scanner(System.in);
         System.out.println("Bienvenido a su Gestor de Bases, ingrese sus comandos");
        do{
@@ -31,7 +32,7 @@ public class AYC_Proyecto {
                salgo = true;
            else{
                secun = secuenciaSeparo(secuencias.toLowerCase());
-               Secuencias s = new Secuencias(secun);
+               s.setDatos(secun);
                s.revisarSecuencias();
                 /*try{
                      Statement st;

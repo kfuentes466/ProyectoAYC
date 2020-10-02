@@ -13,9 +13,22 @@ import java.sql.Statement;
 
 public class Secuencias {
     String[] datos;
+    String usando; 
+    public Secuencias(){
+        this.datos = null;
+        this.usando = "";
+    }
     
-    public Secuencias(String[] secu){
-        this.datos=secu;
+    public void setUsando(String us){
+        this.usando = us;
+    }
+    
+    public String getUsando(){
+        return this.usando;
+    }
+    
+    public void setDatos( String[] secu){
+        this.datos = secu;
     }
     
     public void revisarSecuencias(){
@@ -62,19 +75,22 @@ public class Secuencias {
     //Administracion de las secuencias basicas
     public void ejecutarSecuencias(String sec){
         //Patrones aceptados
-        String patron = ("(mostrar bd)|(crear bd [a-z0-9])|(eliminar bd [a-z0-9])");
+        String patron = ("(mostrar bd)|(crear bd [a-z0-9])|(eliminar bd [a-z0-9])|(usar bd [a-z0-9])|(mostrar tablas)");
         Pattern p = Pattern.compile(patron);
         Matcher matcher = p.matcher(sec);
+    
         while(matcher.find()){
             //Patrones en variables
             String tokenTipo1 = matcher.group(1);
             String tokenTipo2 = matcher.group(2);
             String tokenTipo3 = matcher.group(3);
+            String tokenTipo4 = matcher.group(4);
+            String tokenTipo5 = matcher.group(5);
             //Si conincide con el patron 1
             if(tokenTipo1 != null){
                 try{
                     //Creando conexion con el servidor
-                    Conexion cn = new Conexion();
+                    Conexion cn = new Conexion(getUsando());
                      Statement st;
                      ResultSet rs;
                      st =cn.con.createStatement();
@@ -97,7 +113,7 @@ public class Secuencias {
             }else if(tokenTipo2 != null){
                try{
                    //Creando conexion 
-                     Conexion cn = new Conexion();
+                     Conexion cn = new Conexion(getUsando());
                      Statement st;
                      st =cn.con.createStatement();
                      //Separando la cadena para obtener el nombre
@@ -116,7 +132,7 @@ public class Secuencias {
             }else if(tokenTipo3 != null){
                 try{
                     //Creando conexion
-                     Conexion cn = new Conexion();
+                     Conexion cn = new Conexion(getUsando());
                      Statement st;
                      st =cn.con.createStatement();
                      //Obteniendo el nombre
@@ -129,6 +145,42 @@ public class Secuencias {
                 }catch(Exception e){
                     //Por si hay error
                     System.out.printf("Error : "+ e);
+                }
+            }else if(tokenTipo4 != null){
+                try{
+                    Conexion cn = new Conexion(getUsando());
+                    Statement st;
+                    st =cn.con.createStatement();
+                    //Obteniendo nombre de la bd
+                    String nombre[] = sec.split("usar bd ");
+                    //System.out.println(nombre[1]);
+                    setUsando(nombre[1]);
+                    st.executeQuery("USE "+nombre[1]+";");
+                    System.out.printf("Usando base de datos "+getUsando()+"\n");
+                }catch(Exception e){
+                    System.out.printf("Error : "+e+"\n");
+                }
+            }else if(tokenTipo5 != null){
+                if(usando == null){
+                    System.out.printf("No se ha ejecutado el comando 'usar bd bd_nombre', debes uar una bd para mostrar tablas!\n");
+                }else{
+                    try{
+                        Conexion cn = new Conexion(getUsando());
+                        Statement st;
+                        ResultSet rs;
+                        DatabaseMetaData meta = cn.con.getMetaData();
+                        //st =cn.con.createStatement();
+                        //rs = st.executeQuery("show tables from "+this.usando);
+                        rs = meta.getTables(null, null, null, new String[] {"TABLE"});
+                        System.out.println("**** La base de datos "+ getUsando()+" tiene las siguientes tablas : ****");
+                        while(rs.next()){
+                         //Se imprime cada resultado devuelto por el servidor
+                        System.out.println("---> "+rs.getString("TABLE_NAME"));
+                        }
+                        //System.out.println(getUsando()+ "esta seleccionada");
+                    }catch(Exception e){
+                        System.out.println("Error : "+e);
+                    }
                 }
             }
             else{
@@ -146,5 +198,7 @@ public class Secuencias {
         arbol.agregarNodo("campos");
         arbol.agregarNodo("mostrar");
         arbol.agregarNodo("eliminar");
+        arbol.agregarNodo("mostrar");
+        arbol.agregarNodo("tablas");
     }
 }
