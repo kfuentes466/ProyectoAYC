@@ -47,14 +47,16 @@ public class Secuencias {
         int correctos = 0;
         if(largo >= 2 && largo <4){
             //Ya que hemos puesto que las secuencias basicas tendrán un largo de 2 o 3 de longitud, pues varias
-            //En el caso que sean 2, significa que las 2 palabras seran comandos, por lo cual si es así no se le restara nada(Acordarse que en este caso el for empieza en 0)
+            //En el caso que sean 2, significa que las 2 palabras seran comandos, por lo cual si es así no se le 
+            //restara nada(Acordarse que en este caso el for empieza en 0)
             if (largo > 2) largover = largo -1; 
             //For para ver si los comandos introducidos existen en el arbol
             for(int x=0; x<largover ; x++){ 
                 //Si no existen l metodo de abajo dara falso
                 if(arbol.buscarNodo(data[x]) == false){
                     //Impresion de advertencia
-                    System.out.println("\u001B[31m"+"Comando "+"'"+ data[x]+"'"+ " no reconocido!"+"\u001B[0m");
+                    System.out.println("\u001B[31m"+"Comando "+"'"+ data[x]+"'"+ 
+                            " no reconocido!"+"\u001B[0m");
                     //El return es para interrumpir el for 
                     return;
                 }else{
@@ -193,7 +195,7 @@ public class Secuencias {
                      //se usa executeQuery() cuando se espera información , o tambien en los insert)
                      st.executeUpdate("create database "+nom[1]);
                      //Mensaje de exito
-                     System.out.printf("Base de datos "+nom[1]+" creada!\n");
+                     System.out.printf(azul+"Base de datos "+nom[1]+" creada!\n"+terminar);
                     
                 }catch(Exception e){
                     //Por si hay error
@@ -211,7 +213,7 @@ public class Secuencias {
                      //Eliminando base de datos pasando el nombre
                      st.executeUpdate("drop database "+nom[1]);
                      //Mensaje de exito
-                     System.out.printf("Base de datos "+nom[1]+" Eliminada!\n");
+                     System.out.printf(azul+"Base de datos "+nom[1]+" Eliminada!\n"+terminar);
                     
                 }catch(Exception e){
                     //Por si hay error
@@ -219,7 +221,7 @@ public class Secuencias {
                 }
             }else if(tokenTipo4 != null){
                 try{
-                    Conexion cn = new Conexion(getUsando());
+                    Conexion cn = new Conexion("");
                     Statement st;
                     st =cn.con.createStatement();
                     //Obteniendo nombre de la bd
@@ -474,6 +476,7 @@ public class Secuencias {
                             while(!existeColumna){
                                 System.out.print("la columna '"+columna+"' no existe! Por favor vuelve a intentarlo : ");
                                 columna = entrada.nextLine();
+                                existeColumna = this.columnaexiste(tabla[1], columna);
                             }
                             secuencia += "DELETE FROM "+tabla[1]+" WHERE "+columna+"= '";
                             System.out.print("Ingrese el valor que debe tener dicha columna : ");
